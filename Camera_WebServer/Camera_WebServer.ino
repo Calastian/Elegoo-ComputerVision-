@@ -33,7 +33,7 @@ const char* password = "ESPCALHACKER";
 #define Y5_GPIO_NUM    10
 #define Y6_GPIO_NUM    12
 #define Y7_GPIO_NUM    18
-#define Y8_GPIO_NUM    17
+#define Y8_GPIO_NUM    17 
 #define Y9_GPIO_NUM    16
 #define VSYNC_GPIO_NUM  6
 #define HREF_GPIO_NUM   7

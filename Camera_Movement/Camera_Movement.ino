@@ -46,12 +46,46 @@ void setup() {
 
 
 void loop() {
-  AvoidLines();
+
+
+  espMovement();
+
+
+
+
+
+
+
+  // AvoidLines();
   // LineTracking();
   // CalDist();
   // ObjectRun(distance_cm);
 }
 
+void espMovement()
+{
+    if (Serial.available()) {
+    char command = Serial.read();
+
+    switch (command) {
+      case 'F':
+        driveForward(200);
+        break;
+      case 'B':
+        driveBackward(200);
+        break;
+      case 'L':
+        pivotLeft(100);
+        break;
+      case 'R':
+        pivotRight(100);
+        break;
+      case 'S':
+        stopMotors();
+        break;
+    }
+  }
+}
 
 int pingTime() {
   int pingTravelTime;
@@ -187,6 +221,14 @@ void driveForward(int speed) {
   enableDriver();
   digitalWrite(PHASE_A, HIGH);
   digitalWrite(PHASE_B, HIGH);
+  analogWrite(PWM_A, speed);
+  analogWrite(PWM_B, speed);
+}
+
+void driveBackward(int speed) {
+  enableDriver();
+  digitalWrite(PHASE_A, LOW);
+  digitalWrite(PHASE_B, LOW);
   analogWrite(PWM_A, speed);
   analogWrite(PWM_B, speed);
 }
