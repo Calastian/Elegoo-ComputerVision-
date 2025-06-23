@@ -21,10 +21,12 @@
 #define VSYNC_GPIO_NUM  6
 #define HREF_GPIO_NUM   7
 #define PCLK_GPIO_NUM  13
+#define RXD2 16
+#define TXD2 17
 
 // ←––– REPLACE these with your network’s SSID + PASSWORD –––→
-const char* ssid     = "cal123";
-const char* password = "cornrows"; 
+const char* ssid     = "CalSpot";
+const char* password = "ESPCALHACKER"; 
 const char* URL = "/stream";
 const int FRAMERATE = 10;
 const auto RESOLUTION = esp32cam::Resolution::find(1024, 768);

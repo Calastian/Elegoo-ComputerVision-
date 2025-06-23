@@ -80,6 +80,10 @@ void espMovement()
       case 'R':
         pivotRight(100);
         break;
+      case 'O':
+        // think about something to switch lines or switch modes or something! with the ok hand gesture!
+
+        break;
       case 'S':
         stopMotors();
         break;
