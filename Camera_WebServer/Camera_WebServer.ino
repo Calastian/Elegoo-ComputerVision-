@@ -7,8 +7,8 @@ const char* password = "ESPCALHACKER";
 WebServer server(80);
 
 // Serial2 pins
-#define RXD2 16
-#define TXD2 17
+#define RXD2 17
+#define TXD2 16 // I swapped these two
 
 // Function to add CORS headers
 void addCORSHeaders() {

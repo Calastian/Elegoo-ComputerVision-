@@ -8,6 +8,8 @@ int R_SENSOR_PIN = A0;
 int C_SENSOR_PIN = A1;
 int L_SENSOR_PIN = A2;
 int THRESHOLD    = 700;   // ADC cutoff (0–1023)
+int RXD2 = 17; // switch if not work
+int TXD2 = 16; // May not need these in this class
 
 // TB6612FNG motor driver pins (Elegoo V4)
 int STBY    = 3;
@@ -16,7 +18,7 @@ int PHASE_A = 8;
 int PWM_B   = 5;
 int PHASE_B = 7;
 
-int MOTOR_SPEED = 50;    // 0–255
+int MOTOR_SPEED = 100;    // 0–255
 
 
 void setup() {
@@ -24,7 +26,9 @@ void setup() {
   // Configure UltraSound inputs/outputs
   pinMode(Trig, OUTPUT);
   pinMode(Echo, INPUT);
+  // Serial.begin(9600);
   Serial.begin(9600);
+  Serial.println("Uno Serial");
 
   // Configure line‐tracker inputs
   pinMode(R_SENSOR_PIN, INPUT);
@@ -49,7 +53,16 @@ void loop() {
 
 
   espMovement();
+  // Serial.print("lol");
+  
+    // char command = Serial.read();
+    // Serial.print("Received: "); 
+    // Serial.println(command);
+  
 
+
+  // char print = Serial.read();
+  // Serial.print(print);
 
 
 
@@ -64,8 +77,11 @@ void loop() {
 
 void espMovement()
 {
-    if (Serial.available()) {
+    // delete > 0 if it does nothing
+    if (Serial.available() > 0) {
     char command = Serial.read();
+    Serial.print("Received: "); 
+    Serial.println(command);
 
     switch (command) {
       case 'F':
