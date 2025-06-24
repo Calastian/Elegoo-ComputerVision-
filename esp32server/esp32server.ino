@@ -63,6 +63,7 @@ void initCam() {
   cfg.setPins(pins::AiThinker);
   cfg.setResolution(RESOLUTION);
   cfg.setBufferCount(2);
+  cfg.setJpeg(80);
   Camera.begin(cfg);
 }
 
