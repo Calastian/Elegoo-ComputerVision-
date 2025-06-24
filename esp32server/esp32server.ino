@@ -18,8 +18,8 @@
 #include <WebServer.h>
 
 // ←––– REPLACE these with your network’s SSID + PASSWORD –––→
-const char* ssid     = "cal123";
-const char* password = "cornrows"; 
+const char* ssid     = "CalSpot";
+const char* password = "ESPCALHACKER"; 
 
 // camera pin definitions for your S3-Cam-LCD on the Dev board:
 #define PWDN_GPIO_NUM  -1
