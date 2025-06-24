@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Hand Gesture Car Control</title>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.min.js"></script>
   <style>
-    video, canvas {
+    video,
+    canvas {
       position: absolute;
       left: 0;
       top: 0;
     }
   </style>
 </head>
+
 <body>
   <h2>Hand Gesture Control</h2>
- 
- 
+
+
   <video id="videoInput" width="640" height="480" autoplay muted></video>
   <canvas id="outputCanvas" width="640" height="480"></canvas>
 
@@ -32,11 +35,17 @@
       }
     }
 
+    function refreshCam() {
+      while (true) {
+        sendCommand("capture");
+      }
+    }
+
     function countFingers(landmarks) {
       const tips = [8, 12, 16, 20]; // Index, middle, ring, pinky tips
       let count = 0;
       tips.forEach(i => {
-        if (landmarks[i].y < landmarks[i - 2].y) count++; 
+        if (landmarks[i].y < landmarks[i - 2].y) count++;
       });
       // Thumb check
       if (landmarks[4].x > landmarks[3].x) count++; // Right hand
@@ -49,30 +58,30 @@
       switch (fingers) {
         case 1:
           sendCommand("right");
-          
+
           break;
         case 2:
           sendCommand("left");
-          
+
           break;
         case 3:
           sendCommand("ok");
           break;
-          
+
         case 4:
           sendCommand("backward");
-          
+
           break;
         case 5:
           sendCommand("forward");
-          
+
           break;
         case 0:
           sendCommand("stop");
-          
+
         default:
           sendCommand("stop");
-          
+
       }
     }
 
@@ -98,8 +107,8 @@
 
       if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         for (const landmarks of results.multiHandLandmarks) {
-          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00' });
-          drawLandmarks(canvasCtx, landmarks, { color: '#FF0000' });
+          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#00FF00'});
+          drawLandmarks(canvasCtx, landmarks, {color: '#FF0000'});
           detectGesture(landmarks);
         }
       } else {
@@ -110,7 +119,7 @@
 
     const camera = new Camera(videoElement, {
       onFrame: async () => {
-        await hands.send({ image: videoElement });
+        await hands.send({image: videoElement});
       },
       width: 640,
       height: 480
@@ -118,6 +127,6 @@
 
     camera.start();
   </script>
-</body>
-</html>
+  <class id="livestream" </body>
 
+</html>
