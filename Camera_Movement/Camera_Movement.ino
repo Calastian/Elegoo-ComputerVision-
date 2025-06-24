@@ -8,8 +8,8 @@ int R_SENSOR_PIN = A0;
 int C_SENSOR_PIN = A1;
 int L_SENSOR_PIN = A2;
 int THRESHOLD    = 700;   // ADC cutoff (0–1023)
-int RXD2 = 17; // switch if not work
-int TXD2 = 16; // May not need these in this class
+int RXD2 = 16; // switch if not work
+int TXD2 = 17; // May not need these in this class
 
 // TB6612FNG motor driver pins (Elegoo V4)
 int STBY    = 3;
@@ -17,6 +17,9 @@ int PWM_A   = 6;
 int PHASE_A = 8;
 int PWM_B   = 5;
 int PHASE_B = 7;
+
+// #define RX = 16
+// #define TX = 17
 
 int MOTOR_SPEED = 100;    // 0–255
 
@@ -27,7 +30,7 @@ void setup() {
   pinMode(Trig, OUTPUT);
   pinMode(Echo, INPUT);
   // Serial.begin(9600);
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Uno Serial");
 
   // Configure line‐tracker inputs
@@ -51,8 +54,18 @@ void setup() {
 
 void loop() {
 
+  
 
-  espMovement();
+  // espMovement();
+    
+    int command = Serial.read();
+    Serial.print("Received: "); 
+    Serial.println(command);
+    delay(3000);
+
+    
+  // Serial.write('F');
+  // delay(1000);
   // Serial.print("lol");
   
     // char command = Serial.read();
@@ -78,7 +91,7 @@ void loop() {
 void espMovement()
 {
     // delete > 0 if it does nothing
-    if (Serial.available() > 0) {
+    if (Serial.available()) {
     char command = Serial.read();
     Serial.print("Received: "); 
     Serial.println(command);

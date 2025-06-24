@@ -7,8 +7,8 @@ const char* password = "ESPCALHACKER";
 WebServer server(80);
 
 // Serial2 pins
-#define RXD2 17
-#define TXD2 16 // I swapped these two
+#define RXD2 16
+#define TXD2 17 // I swapped these two
 
 // Function to add CORS headers
 void addCORSHeaders() {
@@ -19,7 +19,9 @@ void addCORSHeaders() {
 
 void setup() {
   Serial.begin(115200);  // Debug
-  Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);  // Communicate with Uno
+  // Serial.begin(9600);
+  // Serial1.begin(115200);
+  Serial2.begin(115200, SERIAL_8N1, 1, 0);  // Communicate with Uno
 
   WiFi.begin(ssid, password);
   Serial.print("Connecting...");
@@ -58,7 +60,7 @@ void setup() {
     Serial2.println("L");
     addCORSHeaders();
     server.send(200, "text/plain", "Left");
-    Serial.println("\Left");
+    Serial.println("\nLeft");
   });
 
   server.on("/right", HTTP_GET, []() {
