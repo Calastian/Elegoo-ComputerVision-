@@ -30,8 +30,8 @@ void setup() {
   pinMode(Trig, OUTPUT);
   pinMode(Echo, INPUT);
   // Serial.begin(9600);
-  Serial.begin(115200);
-  Serial.println("Uno Serial");
+  Serial.begin(9600);
+  // Serial.println("Uno Serial");
 
   // Configure line‐tracker inputs
   pinMode(R_SENSOR_PIN, INPUT);
@@ -58,10 +58,10 @@ void loop() {
 
   // espMovement();
     
-    int command = Serial.read();
+    char command = (char)Serial.read();
     Serial.print("Received: "); 
     Serial.println(command);
-    delay(3000);
+    delay(500);
 
     
   // Serial.write('F');

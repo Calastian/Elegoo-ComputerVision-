@@ -6,7 +6,7 @@ const char* password = "ESPCALHACKER";
 
 WebServer server(80);
 
-// Serial2 pins
+// Serial1 pins
 #define RXD2 16
 #define TXD2 17 // I swapped these two
 
@@ -21,7 +21,8 @@ void setup() {
   Serial.begin(115200);  // Debug
   // Serial.begin(9600);
   // Serial1.begin(115200);
-  Serial2.begin(115200, SERIAL_8N1, 1, 0);  // Communicate with Uno
+  // HardwareSerial.begin();
+  Serial1.begin(9600, SERIAL_8N1, -1, 17);  // Communicate with Uno
 
   WiFi.begin(ssid, password);
   Serial.print("Connecting...");
@@ -43,42 +44,42 @@ void setup() {
   });
 
   server.on("/forward", HTTP_GET, []() {
-    Serial2.println("F");
+    Serial1.write("F");
     addCORSHeaders();
     server.send(200, "text/plain", "Forward");
     Serial.println("\nForward");
   });
 
   server.on("/backward", HTTP_GET, []() {
-    Serial2.println("B");
+    Serial1.println("B");
     addCORSHeaders();
     server.send(200, "text/plain", "Backward");
     Serial.println("\nBackward");
   });
 
   server.on("/left", HTTP_GET, []() {
-    Serial2.println("L");
+    Serial1.println("L");
     addCORSHeaders();
     server.send(200, "text/plain", "Left");
     Serial.println("\nLeft");
   });
 
   server.on("/right", HTTP_GET, []() {
-    Serial2.println("R");
+    Serial1.println("R");
     addCORSHeaders();
     server.send(200, "text/plain", "Right");
     Serial.println("\nRight");
   });
 
   server.on("/stop", HTTP_GET, []() {
-    Serial2.println("S");
+    Serial1.println("S");
     addCORSHeaders();
     server.send(200, "text/plain", "Stop");
     Serial.println("\nStop");
   });
 
   server.on("/ok", HTTP_GET, []() {
-    Serial2.println("O");
+    Serial1.println("O");
     addCORSHeaders();
     server.send(200, "text/plain", "ok");
     Serial.println("\nOk");
