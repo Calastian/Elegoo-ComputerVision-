@@ -1,48 +1,55 @@
-
-int Trig = 13; // sends ultrasonic pulse (pin 13 of the ultrasonic sensor)
-int Echo = 12; //Recieves ultrasonic pulse (pin 12)
-long pingT; //stores ping distance (in microseconds)
+// #include "HardwareSerial.h"
+int Trig = 13;  // sends ultrasonic pulse (pin 13 of the ultrasonic sensor)
+int Echo = 12;  //Recieves ultrasonic pulse (pin 12)
+long pingT;     //stores ping distance (in microseconds)
 float distance_cm;
 int SPEED = 100;
 int R_SENSOR_PIN = A0;
 int C_SENSOR_PIN = A1;
 int L_SENSOR_PIN = A2;
-int THRESHOLD    = 700;   // ADC cutoff (0–1023)
-int RXD2 = 16; // switch if not work
-int TXD2 = 17; // May not need these in this class
+int THRESHOLD = 700;  // ADC cutoff (0–1023)
+int RXD2 = 16;        // switch if not work
+int TXD2 = 17;        // May not need these in this class
 
 // TB6612FNG motor driver pins (Elegoo V4)
-int STBY    = 3;
-int PWM_A   = 6;
+int STBY = 3;
+int PWM_A = 6;
 int PHASE_A = 8;
-int PWM_B   = 5;
+int PWM_B = 5;
 int PHASE_B = 7;
 
 // #define RX = 16
 // #define TX = 17
 
-int MOTOR_SPEED = 100;    // 0–255
+int MOTOR_SPEED = 100;  // 0–255
+
+#define RXD2 21
+#define TXD2 19
+
 
 
 void setup() {
 
+  // Serial2.begin(9600, SERIAL_8N1, 17, 16);
+
   // Configure UltraSound inputs/outputs
-  pinMode(Trig, OUTPUT);
-  pinMode(Echo, INPUT);
-  // Serial.begin(9600);
+  // pinMode(Trig, OUTPUT);
+  // pinMode(Echo, INPUT);
   Serial.begin(9600);
+  // Serial.begin(115200);
   // Serial.println("Uno Serial");
 
+
   // Configure line‐tracker inputs
-  pinMode(R_SENSOR_PIN, INPUT);
-  pinMode(C_SENSOR_PIN, INPUT);
-  pinMode(L_SENSOR_PIN, INPUT);
+  // pinMode(R_SENSOR_PIN, INPUT);
+  // pinMode(C_SENSOR_PIN, INPUT);
+  // pinMode(L_SENSOR_PIN, INPUT);
 
   // Configure motor driver outputs
-  pinMode(STBY,    OUTPUT);
-  pinMode(PWM_A,    OUTPUT);
+  pinMode(STBY, OUTPUT);
+  pinMode(PWM_A, OUTPUT);
   pinMode(PHASE_A, OUTPUT);
-  pinMode(PWM_B,    OUTPUT);
+  pinMode(PWM_B, OUTPUT);
   pinMode(PHASE_B, OUTPUT);
 
   // Start with motors in standby (disabled)
@@ -54,30 +61,9 @@ void setup() {
 
 void loop() {
 
-  
-
-  // espMovement();
-    
-    char command = (char)Serial.read();
-    Serial.print("Received: "); 
-    Serial.println(command);
-    delay(500);
-
-    
-  // Serial.write('F');
-  // delay(1000);
-  // Serial.print("lol");
-  
-    // char command = Serial.read();
-    // Serial.print("Received: "); 
-    // Serial.println(command);
-  
 
 
-  // char print = Serial.read();
-  // Serial.print(print);
-
-
+  espMovement();
 
 
 
@@ -88,12 +74,11 @@ void loop() {
   // ObjectRun(distance_cm);
 }
 
-void espMovement()
-{
-    // delete > 0 if it does nothing
-    if (Serial.available()) {
+void espMovement() {
+  // delete > 0 if it does nothing
+  if (Serial.available() > 0) {
     char command = Serial.read();
-    Serial.print("Received: "); 
+    Serial.print("Received: ");
     Serial.println(command);
 
     switch (command) {
@@ -136,99 +121,90 @@ void ObjectRun(int distance) {
 
   while (distance_cm < 30 && distance_cm > 0) {
 
-    RandTurn(); // this one too!
+    RandTurn();  // this one too!
     driveForward(200);
     // BackUp(); // just these two for perfect object detection
     CalDist();
-
   }
 }
 
-void AvoidLines()
-{
+void AvoidLines() {
 
   // Read each sensor (0 = white, ~1023 = black)
-  int rightVal  = analogRead(R_SENSOR_PIN);
+  int rightVal = analogRead(R_SENSOR_PIN);
   int centerVal = analogRead(C_SENSOR_PIN);
-  int leftVal   = analogRead(L_SENSOR_PIN);
+  int leftVal = analogRead(L_SENSOR_PIN);
 
   // Determine if each is over the black line
-  bool overRight  = (rightVal  > THRESHOLD);
+  bool overRight = (rightVal > THRESHOLD);
   bool overCenter = (centerVal > THRESHOLD);
-  bool overLeft   = (leftVal   > THRESHOLD);
+  bool overLeft = (leftVal > THRESHOLD);
 
   // Print raw values for debugging
-  Serial.print("R="); Serial.print(rightVal);
-  Serial.print("  C="); Serial.print(centerVal);
-  Serial.print("  L="); Serial.println(leftVal);
+  Serial.print("R=");
+  Serial.print(rightVal);
+  Serial.print("  C=");
+  Serial.print(centerVal);
+  Serial.print("  L=");
+  Serial.println(leftVal);
 
   // Avoid the lines
   if (!overCenter && !(overLeft || overRight)) {
     driveForward(MOTOR_SPEED);
     Serial.println("  → Forward");
-  }
-  else if (overLeft && !(overCenter || overRight)) {
+  } else if (overLeft && !(overCenter || overRight)) {
     pivotRight(MOTOR_SPEED);
     TurnRight();
     Serial.println("  → Pivot Right");
-  }
-  else if (overRight && !(overLeft || overCenter)) {
+  } else if (overRight && !(overLeft || overCenter)) {
     pivotLeft(MOTOR_SPEED);
     TurnLeft();
     Serial.println("  → Pivot Left");
-  }
-  else if (overRight && overCenter && overLeft) {
+  } else if (overRight && overCenter && overLeft) {
     stopMotors();
     // findLine(MOTOR_SPEED);
     // Serial.println("  → Line Lost: Stopping");
-  }
-  else
-  {
-    if (rand() % 10 % 2 == 0)
-    {
+  } else {
+    if (rand() % 10 % 2 == 0) {
       pivotRight(MOTOR_SPEED);
-    }
-    else
-    {
+    } else {
       pivotLeft(MOTOR_SPEED);
     }
-
   }
 
   delay(50);  // short pause (motor commands are non-blocking)
 }
-void LineTracking()
-{
+void LineTracking() {
 
   // Read each sensor (0 = white, ~1023 = black)
-  int rightVal  = analogRead(R_SENSOR_PIN);
+  int rightVal = analogRead(R_SENSOR_PIN);
   int centerVal = analogRead(C_SENSOR_PIN);
-  int leftVal   = analogRead(L_SENSOR_PIN);
+  int leftVal = analogRead(L_SENSOR_PIN);
 
   // Determine if each is over the black line
-  bool overRight  = (rightVal  > THRESHOLD);
+  bool overRight = (rightVal > THRESHOLD);
   bool overCenter = (centerVal > THRESHOLD);
-  bool overLeft   = (leftVal   > THRESHOLD);
+  bool overLeft = (leftVal > THRESHOLD);
 
   // Print raw values for debugging
-  Serial.print("R="); Serial.print(rightVal);
-  Serial.print("  C="); Serial.print(centerVal);
-  Serial.print("  L="); Serial.println(leftVal);
+  Serial.print("R=");
+  Serial.print(rightVal);
+  Serial.print("  C=");
+  Serial.print(centerVal);
+  Serial.print("  L=");
+  Serial.println(leftVal);
 
   // Follow the line
   if (overCenter) {
     driveForward(MOTOR_SPEED);
     Serial.println("  → Forward");
-  }
-  else if (overLeft && (!overCenter || !overRight)) {
+  } else if (overLeft && (!overCenter || !overRight)) {
     pivotLeft(MOTOR_SPEED);
     Serial.println("  → Pivot Left");
-  }
-  else if (overRight && (!overCenter || !overLeft)) {
+  } else if (overRight && (!overCenter || !overLeft)) {
     pivotRight(MOTOR_SPEED);
     Serial.println("  → Pivot Right");
-  }
-  else {
+  } else {
     stopMotors();
     findLine(MOTOR_SPEED);
     Serial.println("  → Line Lost: Stopping");
@@ -282,38 +258,31 @@ void pivotRight(int speed) {
   analogWrite(PWM_B, speed);
 }
 
-void findLine(int speed)
-{
+void findLine(int speed) {
   enableDriver();
   digitalWrite(PHASE_A, HIGH);
   digitalWrite(PHASE_B, LOW);
   analogWrite(PWM_A, speed);
   analogWrite(PWM_B, speed);
-
 }
 
 void stopMotors() {
   disableDriver();
 }
 
-void CalDist()
-{
+void CalDist() {
   pingT = pingTime();
-  distance_cm = pingT / 58; //convert the microseconds to CM (~0.0343cm/us)
+  distance_cm = pingT / 58;  //convert the microseconds to CM (~0.0343cm/us)
   Serial.println(pingT);
   Serial.println(distance_cm);
 }
 
-void BackUp()
-{
-  if (distance_cm > 0 && distance_cm < 10)
-  {
+void BackUp() {
+  if (distance_cm > 0 && distance_cm < 10) {
     digitalWrite(PHASE_A, LOW);
     digitalWrite(PHASE_B, LOW);
 
-  }
-  else
-  {
+  } else {
     delay(200);
 
     digitalWrite(PHASE_A, HIGH);
@@ -321,24 +290,19 @@ void BackUp()
   }
 }
 
-void RandTurn()
-{
-  if ((int)distance_cm % 2 == 0)
-  {
+void RandTurn() {
+  if ((int)distance_cm % 2 == 0) {
     analogWrite(PWM_A, SPEED + 30);
     analogWrite(PWM_B, 20);
     delay(500);
-  }
-  else
-  {
+  } else {
     analogWrite(PWM_A, 20);
     analogWrite(PWM_B, SPEED + 30);
     delay(500);
   }
 }
 
-void TurnRight()
-{
+void TurnRight() {
   digitalWrite(PHASE_A, HIGH);
   analogWrite(PWM_A, 80);
   digitalWrite(PHASE_B, LOW);
@@ -350,8 +314,7 @@ void TurnRight()
   digitalWrite(PHASE_B, HIGH);
 }
 
-void TurnLeft()
-{
+void TurnLeft() {
   digitalWrite(PHASE_A, LOW);
   analogWrite(PWM_A, 80);
   digitalWrite(PHASE_B, HIGH);
@@ -363,8 +326,7 @@ void TurnLeft()
   digitalWrite(PHASE_A, HIGH);
 }
 
-void FF(int Fast, int Slow)
-{
+void FF(int Fast, int Slow) {
   digitalWrite(STBY, HIGH);
   digitalWrite(PHASE_A, HIGH);
   digitalWrite(PHASE_B, HIGH);
@@ -372,22 +334,17 @@ void FF(int Fast, int Slow)
   analogWrite(PWM_B, Slow);
 }
 
-int Min(int one, int two, int three, int four)
-{
-  if (one < two && one < three && one < four)
-  {
+int Min(int one, int two, int three, int four) {
+  if (one < two && one < three && one < four) {
     return one;
   }
-  if (two < one && two < three && two < four)
-  {
+  if (two < one && two < three && two < four) {
     return two;
   }
-  if (three < two && three < one && three < four)
-  {
+  if (three < two && three < one && three < four) {
     return three;
   }
-  if (four < two && four < three && four < one)
-  {
+  if (four < two && four < three && four < one) {
     return four;
   }
 }
